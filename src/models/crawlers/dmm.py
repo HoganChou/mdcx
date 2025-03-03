@@ -227,10 +227,10 @@ def get_real_url(html, number, number2, file_path):
     for i in temp_list:
         if "tv.dmm.co.jp" in i:
             tv_list.append(i)
-        elif "/digital/" in i:
-            digital_list.append(i)
         elif "/dvd/" in i:
             dvd_list.append(i)
+         elif "/digital/" in i:
+            digital_list.append(i)
         elif "/prime/" in i:
             prime_list.append(i)
         elif "/monthly/" in i:
