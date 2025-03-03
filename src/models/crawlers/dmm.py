@@ -98,11 +98,9 @@ def get_tag(html):
 
 
 def get_cover(html):
-    result = html.xpath('//a[@id="sample-image1"]/img/@src')
-    if result:
-        # 替换域名并返回第一个匹配项
-        return re.sub(r'pics.dmm.co.jp', r'awsimgsrc.dmm.co.jp/pics_dig', result[0])
-    return ''  # 无匹配时返回空字符串
+    result = html.xpath('//a[@name="package-image"]/@href')
+    result = re.sub(r"pics.dmm.co.jp", r"awsimgsrc.dmm.co.jp/pics_dig", result[0])
+    return result if result else ""
 
 
 def get_poster(html, cover):
@@ -147,34 +145,53 @@ def get_score(html):
 
 
 def get_trailer(htmlcode, real_url):
+    # 定义一个空字符串，用于存储视频预告片链接
     trailer_url = ""
+    # 使用正则表达式查找htmlcode中onclick属性中cid的值
     normal_cid = re.findall(r"onclick=\"sampleplay\('.+cid=([^/]+)/", htmlcode)
+    # 使用正则表达式查找htmlcode中vr-sample-player链接中cid的值
     vr_cid = re.findall(r"https://www.dmm.co.jp/digital/-/vr-sample-player/=/cid=([^/]+)", htmlcode)
+    # 如果normal_cid存在
     if normal_cid:
+        # 获取cid的值
         cid = normal_cid[0]
+        # 如果real_url中包含"dmm.co.jp"
         if "dmm.co.jp" in real_url:
+            # 构造url
             url = (
                 "https://www.dmm.co.jp/service/digitalapi/-/html5_player/=/cid=%s/mtype=AhRVShI_/service=digital/floor=videoa/mode=/"
                 % cid
             )
         else:
+            # 构造url
             url = (
                 "https://www.dmm.com/service/digitalapi/-/html5_player/=/cid=%s/mtype=AhRVShI_/service=digital/floor=videoa/mode=/"
                 % cid
             )
 
+        # 调用get_html函数，获取url对应的htmlcode
         result, htmlcode = get_html(url)
         try:
+            # 使用正则表达式查找htmlcode中var_params的值
             var_params = re.findall(r" = ({[^;]+)", htmlcode)[0].replace(r"\/", "/")
+            # 将var_params转换为json格式
             trailer_url = json.loads(var_params).get("bitrates")[-1].get("src")
+            # 如果trailer_url以//开头
             if trailer_url.startswith("//"):
+                # 将trailer_url转换为https://开头
                 trailer_url = "https:" + trailer_url
         except:
+            # 如果发生异常，将trailer_url置为空字符串
             trailer_url = ""
+    # 如果vr_cid存在
     elif vr_cid:
+        # 获取cid的值
         cid = vr_cid[0]
+        # 构造temp_url
         temp_url = "https://cc3001.dmm.co.jp/vrsample/{0}/{1}/{2}/{2}vrlite.mp4".format(cid[:1], cid[:3], cid)
+        # 调用check_url函数，检查temp_url是否可用
         trailer_url = check_url(temp_url)
+    # 返回trailer_url
     return trailer_url
 
 
@@ -229,7 +246,7 @@ def get_real_url(html, number, number2, file_path):
             tv_list.append(i)
         elif "/dvd/" in i:
             dvd_list.append(i)
-         elif "/digital/" in i:
+        elif "/digital/" in i:
             digital_list.append(i)
         elif "/prime/" in i:
             prime_list.append(i)
@@ -239,7 +256,7 @@ def get_real_url(html, number, number2, file_path):
             other_list.append(i)
     dvd_list.sort(reverse=True)
     # 丢弃 tv_list, 因为获取其信息调用的后续 api 无法访问
-    new_url_list = digital_list + dvd_list + prime_list + monthly_list + other_list
+    new_url_list = dvd_list + digital_list + prime_list + monthly_list + other_list
     real_url = new_url_list[0] if new_url_list else ""
     return real_url, number
 
