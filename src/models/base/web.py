@@ -457,8 +457,8 @@ def check_url(url, length=False, real_url=False):
                 else:
                     return 0
 
-            # 状态码 > 299，表示请求失败，视为不可用
-            if r.status_code > 299:
+            # 状态码 > 299，表示请求失败，视为不可用, 405 表示请求方法不支持, 改为GET单独处理
+            if r.status_code > 299 and r.status_code != 405:
                 error_info = f"{r.status_code} {url}"
                 signal.add_log(f"🔴 请求失败！ 重试: [{j + 1}/{retry_times}] {error_info}")
                 continue
@@ -488,7 +488,7 @@ def check_url(url, length=False, real_url=False):
                     signal.add_log(f"🔴 检测未通过！当前图片已被网站删除 {url}")
                     return 0
 
-            # 获取文件大小。如果没有获取到文件大小或请求方法不被允许，尝试下载15k数据，如果失败，视为不可用
+            # 获取文件大小。如果没有获取到文件大小或 状态码 = 405，尝试下载15k数据，如果失败，视为不可用
             content_length = r.headers.get("Content-Length")
             if not content_length or r.status_code == 405:
                 response = requests.get(
@@ -500,9 +500,9 @@ def check_url(url, length=False, real_url=False):
                     i += 1
                     if i == 3:
                         response.close()
-                        signal.add_log(f"✅ 检测通过！未返回大小，预下载15k通过 {true_url}")
+                        signal.add_log(f"✅ 检测通过！预下载15k通过 {true_url}")
                         return 10240 if length else true_url
-                signal.add_log(f"🔴 检测未通过！未返回大小，预下载15k失败 {true_url}")
+                signal.add_log(f"🔴 检测未通过！预下载15k失败 {true_url}")
                 return 0
 
             # 如果返回内容的文件大小 < 8k，视为不可用
