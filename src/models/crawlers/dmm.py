@@ -98,21 +98,21 @@ def get_tag(html):
 
 
 def get_cover(html, real_url):
-    if "dmm.co.jp" in real_url:
+    if "mono/dvd" in real_url:
+        result = html.xpath('//meta[@property="og:image"]/@content')
+        if result:
+           return result[0]
+    elif "dmm.co.jp" in real_url:
         result = html.xpath('//a[@id="sample-image1"]/img/@src')
         if result:
             # 替换域名并返回第一个匹配项
             return re.sub(r'pics.dmm.co.jp', r'awsimgsrc.dmm.co.jp/pics_dig', result[0])
-    elif "dmm.com" in real_url:
-        result = html.xpath('//meta[@property="og:image"]/@content')
-        if result:
-            return result
     return ''  # 无匹配时返回空字符串
 
 
-def get_poster(html, cover):
+def get_poster(html, cover, real_url):
     result = html.xpath('//meta[@property="og:image"]/@content')
-    if result:
+    if result and "dmm.co.jp/digital" in real_url:
         result = re.sub(r"pics.dmm.co.jp", r"awsimgsrc.dmm.co.jp/pics_dig", result[0])
         return result
     else:
@@ -633,7 +633,7 @@ def main(number, appoint_url="", log_info="", req_web="", language="jp", file_pa
                 studio = get_studio(html)
                 publisher = get_publisher(html, studio)
                 extrafanart = get_extrafanart(html, real_url)
-                poster_url = get_poster(html, cover_url)
+                poster_url = get_poster(html, cover_url, real_url)
                 trailer = get_trailer(htmlcode, real_url)
                 mosaic = get_mosaic(html)
             except Exception as e:
@@ -768,4 +768,5 @@ if __name__ == "__main__":
     # print(main('stars-779'))
     # print(main('FAKWM-001', 'https://tv.dmm.com/vod/detail/?season=5497fakwm00001'))
     # print(main('FAKWM-064', 'https://tv.dmm.com/vod/detail/?season=5497fakwm00064'))
+    # print(main('IPZ-791'))
     pass
