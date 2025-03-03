@@ -134,7 +134,7 @@ def get_director(html):
 
 def get_ountline(html):
     result = html.xpath(
-        "normalize-space(string(//div[@class='wp-smplex']/preceding-sibling::div[contains(@class, 'mg-b20')][1]))"
+        "normalize-space(string(//div[@class='wp-smplex']/preceding-sibling::div[contains(@class, 'mg-b20')][2]))"
     )
     return result.replace("「コンビニ受取」対象商品です。詳しくはこちらをご覧ください。", "").strip()
 
