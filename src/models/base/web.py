@@ -488,9 +488,9 @@ def check_url(url, length=False, real_url=False):
                     signal.add_log(f"🔴 检测未通过！当前图片已被网站删除 {url}")
                     return 0
 
-            # 获取文件大小。如果没有获取到文件大小，尝试下载15k数据，如果失败，视为不可用
+            # 获取文件大小。如果没有获取到文件大小或请求方法不被允许，尝试下载15k数据，如果失败，视为不可用
             content_length = r.headers.get("Content-Length")
-            if not content_length:
+            if not content_length or r.status_code == 405:
                 response = requests.get(
                     true_url, headers=headers, proxies=proxies, timeout=timeout, verify=False, stream=True
                 )

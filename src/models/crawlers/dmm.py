@@ -45,12 +45,12 @@ def get_mosaic(html):
 
 
 def get_studio(html):
-    result = html.xpath("//td/a[contains(@href, 'article=maker')]/text()")
+    result = html.xpath("//a[@data-i3pst='info_maker']/text()")
     return result[0] if result else ""
 
 
 def get_publisher(html, studio):
-    result = html.xpath("//td/a[contains(@href, 'article=label')]/text()")
+    result = html.xpath("//a[@data-i3pst='info_label']/text()")
     return result[0] if result else studio
 
 
@@ -97,11 +97,16 @@ def get_tag(html):
     return str(result).strip(" ['']").replace("', '", ",")
 
 
-def get_cover(html):
-    result = html.xpath('//a[@id="sample-image1"]/img/@src')
-    if result:
-        # 替换域名并返回第一个匹配项
-        return re.sub(r'pics.dmm.co.jp', r'awsimgsrc.dmm.co.jp/pics_dig', result[0])
+def get_cover(html, real_url):
+    if "dmm.co.jp" in real_url:
+        result = html.xpath('//a[@id="sample-image1"]/img/@src')
+        if result:
+            # 替换域名并返回第一个匹配项
+            return re.sub(r'pics.dmm.co.jp', r'awsimgsrc.dmm.co.jp/pics_dig', result[0])
+    elif "dmm.com" in real_url:
+        result = html.xpath('//meta[@property="og:image"]/@content')
+        if result:
+            return result
     return ''  # 无匹配时返回空字符串
 
 
@@ -114,16 +119,17 @@ def get_poster(html, cover):
         return cover.replace("pl.jpg", "ps.jpg")
 
 
-def get_extrafanart(html):
-    result_list = html.xpath("//div[@id='sample-image-block']/a/img/@src")
-    if not result_list:
-        result_list = html.xpath("//a[@name='sample-image']/img/@src")
-    i = 1
+def get_extrafanart(html, real_url):
     result = []
-    for each in result_list:
-        each = each.replace("-%s.jpg" % i, "jp-%s.jpg" % i)
-        result.append(each)
-        i += 1
+    if "dmm.co.jp" in real_url:
+        result_list = html.xpath("//div[@id='sample-image-block']/a/img/@src")
+        if not result_list:
+            result_list = html.xpath("//a[@name='sample-image']/img/@src")
+        i = 0
+        for each in result_list:
+            each = each.replace("-%s.jpg" % i, "jp-%s.jpg" % i)
+            result.append(each)
+            i += 1
     return result
 
 
@@ -148,10 +154,14 @@ def get_score(html):
 
 def get_trailer(htmlcode, real_url):
     trailer_url = ""
-    normal_cid = re.findall(r"onclick=\"sampleplay\('.+cid=([^/]+)/", htmlcode)
+    normal_cid = re.findall(r'cid=(.*?)/', real_url)[0]
     vr_cid = re.findall(r"https://www.dmm.co.jp/digital/-/vr-sample-player/=/cid=([^/]+)", htmlcode)
-    if normal_cid:
-        cid = normal_cid[0]
+    if vr_cid:
+        cid = vr_cid[0]
+        temp_url = "https://cc3001.dmm.co.jp/vrsample/{0}/{1}/{2}/{2}vrlite.mp4".format(cid[:1], cid[:3], cid)
+        trailer_url = check_url(temp_url)
+    elif normal_cid:
+        cid = normal_cid
         if "dmm.co.jp" in real_url:
             url = (
                 "https://www.dmm.co.jp/service/digitalapi/-/html5_player/=/cid=%s/mtype=AhRVShI_/service=digital/floor=videoa/mode=/"
@@ -166,15 +176,11 @@ def get_trailer(htmlcode, real_url):
         result, htmlcode = get_html(url)
         try:
             var_params = re.findall(r" = ({[^;]+)", htmlcode)[0].replace(r"\/", "/")
-            trailer_url = json.loads(var_params).get("bitrates")[-1].get("src")
+            trailer_url = json.loads(var_params).get("src")
             if trailer_url.startswith("//"):
                 trailer_url = "https:" + trailer_url
         except:
             trailer_url = ""
-    elif vr_cid:
-        cid = vr_cid[0]
-        temp_url = "https://cc3001.dmm.co.jp/vrsample/{0}/{1}/{2}/{2}vrlite.mp4".format(cid[:1], cid[:3], cid)
-        trailer_url = check_url(temp_url)
     return trailer_url
 
 
@@ -615,7 +621,7 @@ def main(number, appoint_url="", log_info="", req_web="", language="jp", file_pa
                 raise Exception(debug_info)
             try:
                 actor = get_actor(html)  # 获取演员
-                cover_url = get_cover(html)  # 获取 cover
+                cover_url = get_cover(html, real_url)  # 获取 cover
                 outline = get_ountline(html)
                 tag = get_tag(html)
                 release = get_release(html)
@@ -626,7 +632,7 @@ def main(number, appoint_url="", log_info="", req_web="", language="jp", file_pa
                 director = get_director(html)
                 studio = get_studio(html)
                 publisher = get_publisher(html, studio)
-                extrafanart = get_extrafanart(html)
+                extrafanart = get_extrafanart(html, real_url)
                 poster_url = get_poster(html, cover_url)
                 trailer = get_trailer(htmlcode, real_url)
                 mosaic = get_mosaic(html)
@@ -729,7 +735,7 @@ if __name__ == "__main__":
     # print(main('cwx-001', file_path='134cwx001-1.mp4'))
     # print(main('ssis-222'))
     # print(main('snis-036'))
-    # print(main('GLOD-148'
+    # print(main('GLOD-148'))
     # print(main('（抱き枕カバー付き）自宅警備員 1stミッション イイナリ巨乳長女・さやか～編'))    # 番号最后有字母
     # print(main('エロコンビニ店長 泣きべそ蓮っ葉・栞〜お仕置きじぇらしぃナマ逸機〜'))
     # print(main('初めてのヒトヅマ 第4話 ビッチな女子の恋愛相談'))
