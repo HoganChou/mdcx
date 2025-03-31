@@ -8,6 +8,8 @@ from lxml import etree
 
 from models.base.web import check_url, get_dmm_trailer, get_html, post_html
 
+from playwright.sync_api import sync_playwright
+
 urllib3.disable_warnings()  # yapf: disable
 
 
@@ -144,6 +146,7 @@ def get_ountline(html):
     result = html.xpath(
         "normalize-space(string(//div[@class='wp-smplex']/preceding-sibling::div[contains(@class, 'mg-b20')][1]))"
     )
+    result = result.split("※ 配信方法")[0]
     return result.replace("「コンビニ受取」対象商品です。詳しくはこちらをご覧ください。", "").strip()
 
 
@@ -184,70 +187,119 @@ def get_trailer(htmlcode, real_url):
     return trailer_url
 
 
-def get_real_url(html, number, number2, file_path):
+def get_real_url(url, number, number2, file_path, cookies=None):
+    """
+    使用 Playwright 获取目标页面的 HTML，并提取符合条件的目标 URL。
+
+    参数:
+        url (str): 目标页面的 URL。
+        number (str): 视频编号（原始格式）。
+        number2 (str): 视频编号（处理后格式）。
+        file_path (str): 文件路径或文件名，用于辅助判断。
+        cookies (list of dict): 需要添加的 Cookie 列表，格式为 [{"name": "key", "value": "value", ...}]。
+
+    返回:
+        tuple: (real_url, number)，real_url 为目标页面 URL，number 为修正后的视频编号。
+    """
+    cookies = [
+    {"name": "uid", "value": "abcd786561031111", "domain": ".dmm.co.jp", "path": "/"},
+    {"name": "age_check_done", "value": "1", "domain": ".dmm.co.jp", "path": "/"}
+    ]
+
+    # 将 number2 转换为小写并去掉 "-"
     number_temp = number2.lower().replace("-", "")
-    url_list = html.xpath("//p[@class='tmb']/a/@href")
-
-    # https://tv.dmm.co.jp/list/?content=mide00726&i3_ref=search&i3_ord=1
-    # https://www.dmm.co.jp/digital/videoa/-/detail/=/cid=mide00726/?i3_ref=search&i3_ord=2
-    # https://www.dmm.com/mono/dvd/-/detail/=/cid=n_709mmrak089sp/?i3_ref=search&i3_ord=1
-    # /cid=snis00900/
-    # /cid=snis126/ /cid=snis900/ 图上面没有蓝光水印
-    # /cid=h_346rebdb00017/
-    # /cid=6snis027/ /cid=7snis900/
-
     number1 = number_temp.replace("000", "")
+
+    # 定义正则表达式
     number_pre = re.compile(f"(?<=[=0-9]){number_temp[:3]}")
     number_end = re.compile(f"{number_temp[-3:]}(?=(-[0-9])|([a-z]*)?[/&])")
     number_mid = re.compile(f"[^a-z]{number1}[^0-9]")
-    temp_list = []
-    for each in url_list:
-        if (number_pre.search(each) and number_end.search(each)) or number_mid.search(each):
-            cid_list = re.findall(r"(cid|content)=([^/&]+)", each)
-            if cid_list:
-                temp_list.append(each)
-                cid = cid_list[0][1]
-                if "-" in cid:  # 134cwx001-1
-                    if cid[-2:] in file_path:
-                        number = cid
-    if not temp_list:  # 通过标题搜索
-        title_list = html.xpath("//p[@class='txt']/a//text()")
-        if title_list and url_list:
-            full_title = number
-            for i in range(len(url_list)):
-                temp_title = title_list[i].replace("...", "").strip()
-                if temp_title in full_title:
-                    temp_url = url_list[i]
-                    temp_list.append(temp_url)
-                    cid = re.findall(r"(cid|content)=.*?([a-z]{3,})0*(\d{3,}[a-z]*)", temp_url)
-                    if cid:
-                        number = (cid[0][1] + "-" + cid[0][2]).upper()
 
-    # 网址排序：digital(数据完整)  >  dvd(无前缀数字，图片完整)   >   prime（有发行日期）   >   premium（无发行日期）  >  s1（无发行日期）
-    tv_list = []
-    digital_list = []
-    dvd_list = []
-    prime_list = []
-    monthly_list = []
-    other_list = []
-    for i in temp_list:
-        if "tv.dmm.co.jp" in i:
-            tv_list.append(i)
-        elif "/digital/" in i:
-            digital_list.append(i)
-        elif "/dvd/" in i:
-            dvd_list.append(i)
-        elif "/prime/" in i:
-            prime_list.append(i)
-        elif "/monthly/" in i:
-            monthly_list.append(i)
-        else:
-            other_list.append(i)
-    dvd_list.sort(reverse=True)
-    # 丢弃 tv_list, 因为获取其信息调用的后续 api 无法访问
-    new_url_list = digital_list + dvd_list + prime_list + monthly_list + other_list
-    real_url = new_url_list[0] if new_url_list else ""
-    return real_url, number
+    with sync_playwright() as p:
+        # 启动浏览器（启用 headless 模式）
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080},
+            ignore_https_errors=True
+        )
+
+        # 如果提供了 Cookie，则添加到上下文中
+        if cookies:
+            context.add_cookies(cookies)
+
+        # 创建一个新页面
+        page = context.new_page()
+
+        # 打开目标页面
+        page.goto(url, wait_until="networkidle")
+
+        # 触发懒加载（如果需要）
+        page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+
+        # 提取页面 HTML 内容
+        html_content = page.content()
+
+        # 关闭浏览器
+        browser.close()
+
+        # 将 HTML 加载到 lxml.etree 以使用 XPath
+        from lxml import etree
+        html = etree.HTML(html_content)
+
+        # 修改 XPath：提取所有链接
+        url_list = html.xpath("//div[@class='flex py-1.5 pl-3']/a/@href")
+
+        temp_list = []
+        for each in url_list:
+            if (number_pre.search(each) and number_end.search(each)) or number_mid.search(each):
+                cid_list = re.findall(r"(cid|content)=([^/&]+)", each)
+                if cid_list:
+                    temp_list.append(each)
+                    cid = cid_list[0][1]
+                    if "-" in cid:  # 134cwx001-1
+                        if cid[-2:] in file_path:
+                            number = cid
+
+        if not temp_list:  # 通过标题搜索
+            title_list = html.xpath("//p[@class='txt']/a//text()")
+            if title_list and url_list:
+                full_title = number
+                for i in range(len(url_list)):
+                    temp_title = title_list[i].replace("...", "").strip()
+                    if temp_title in full_title:
+                        temp_url = url_list[i]
+                        temp_list.append(temp_url)
+                        cid = re.findall(r"(cid|content)=.*?([a-z]{3,})0*(\d{3,}[a-z]*)", temp_url)
+                        if cid:
+                            number = (cid[0][1] + "-" + cid[0][2]).upper()
+
+        # 网址排序：digital(数据完整) > dvd(无前缀数字，图片完整) > prime（有发行日期） > premium（无发行日期） > s1（无发行日期）
+        tv_list = []
+        digital_list = []
+        dvd_list = []
+        prime_list = []
+        monthly_list = []
+        other_list = []
+        for i in temp_list:
+            if "tv.dmm.co.jp" in i:
+                tv_list.append(i)
+            elif "/digital/" in i:
+                digital_list.append(i)
+            elif "/dvd/" in i:
+                dvd_list.append(i)
+            elif "/prime/" in i:
+                prime_list.append(i)
+            elif "/monthly/" in i:
+                monthly_list.append(i)
+            else:
+                other_list.append(i)
+        dvd_list.sort(reverse=True)
+        # 丢弃 tv_list, 因为获取其信息调用的后续 API 无法访问
+        new_url_list = digital_list + dvd_list + prime_list + monthly_list + other_list
+        real_url = new_url_list[0] if new_url_list else ""
+        return real_url, number
+
 
 
 # invalid API
@@ -484,7 +536,7 @@ def main(number, appoint_url="", log_info="", req_web="", language="jp", file_pa
 
             # 未指定详情页地址时，获取详情页地址（刚才请求的是搜索页）
             if not appoint_url:
-                real_url, number = get_real_url(html, number, number, file_path)
+                real_url, number = get_real_url(real_url, number, number, file_path)
                 if not real_url:
                     debug_info = "搜索结果: 未匹配到番号！"
                     log_info += web_info + debug_info
@@ -500,7 +552,7 @@ def main(number, appoint_url="", log_info="", req_web="", language="jp", file_pa
                             log_info += web_info + debug_info
                             raise Exception(debug_info)
                         html = etree.fromstring(htmlcode, etree.HTMLParser())
-                        real_url, number = get_real_url(html, number, number_no_00, file_path)
+                        real_url, number = get_real_url(real_url, number, number_no_00, file_path)
                         if not real_url:
                             debug_info = "搜索结果: 未匹配到番号！"
                             log_info += web_info + debug_info
@@ -516,7 +568,7 @@ def main(number, appoint_url="", log_info="", req_web="", language="jp", file_pa
                         log_info += web_info + debug_info
                         raise Exception(debug_info)
                     html = etree.fromstring(htmlcode, etree.HTMLParser())
-                    real_url, number0 = get_real_url(html, number, number_no_00, file_path)
+                    real_url, number0 = get_real_url(real_url, number, number_no_00, file_path)
                     if not real_url:
                         debug_info = "搜索结果: 未匹配到番号！"
                         log_info += web_info + debug_info
@@ -769,4 +821,7 @@ if __name__ == "__main__":
     # print(main('FAKWM-001', 'https://tv.dmm.com/vod/detail/?season=5497fakwm00001'))
     # print(main('FAKWM-064', 'https://tv.dmm.com/vod/detail/?season=5497fakwm00064'))
     # print(main('IPZ-791'))
+    # print(main('FPRE-113'))
+    # print(main('fpre00113'))
+    # print(main('FPRE113'))
     pass
