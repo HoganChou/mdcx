@@ -123,7 +123,14 @@ def get_poster(html, cover, real_url):
 
 def get_extrafanart(html, real_url):
     result = []
-    if "dmm.co.jp" in real_url:
+    if "mono/dvd" in real_url:
+        result_list = html.xpath("//a[@name='sample-image']/img/@data-lazy")
+        i = 1
+        for each in result_list:
+            each = each.replace("-%s.jpg" % i, "jp-%s.jpg" % i)
+            result.append(each)
+            i += 1
+    elif "dmm.co.jp" in real_url:
         result_list = html.xpath("//div[@id='sample-image-block']/a/img/@src")
         if not result_list:
             result_list = html.xpath("//a[@name='sample-image']/img/@src")
@@ -142,12 +149,18 @@ def get_director(html):
     return result[0] if result else ""
 
 
-def get_ountline(html):
-    result = html.xpath(
-        "normalize-space(string(//div[@class='wp-smplex']/preceding-sibling::div[contains(@class, 'mg-b20')][1]))"
-    )
-    result = result.split("※ 配信方法")[0]
-    return result.replace("「コンビニ受取」対象商品です。詳しくはこちらをご覧ください。", "").strip()
+def get_outline(html, real_url):
+    result = ""
+    if "mono/dvd" in real_url:
+        result = html.xpath("normalize-space(string(//div[@class='mg-b20 lh4']/p[@class='mg-b20']))")
+        return result if result else ""
+    elif "dmm.co.jp" in real_url:
+        result = html.xpath(
+            "normalize-space(string(//div[@class='wp-smplex']/preceding-sibling::div[contains(@class, 'mg-b20')][1]))"
+        )
+        result = result.split("※ 配信方法")[0]
+        return result.replace("「コンビニ受取」対象商品です。詳しくはこちらをご覧ください。", "").strip()
+    return result
 
 
 def get_score(html):
@@ -674,7 +687,7 @@ def main(number, appoint_url="", log_info="", req_web="", language="jp", file_pa
             try:
                 actor = get_actor(html)  # 获取演员
                 cover_url = get_cover(html, real_url)  # 获取 cover
-                outline = get_ountline(html)
+                outline = get_outline(html, real_url)
                 tag = get_tag(html)
                 release = get_release(html)
                 year = get_year(release)
@@ -824,4 +837,6 @@ if __name__ == "__main__":
     # print(main('FPRE-113'))
     # print(main('fpre00113'))
     # print(main('FPRE113'))
+    # print(main('ABF-164'))
+    # print(main('ABF-203'))
     pass
