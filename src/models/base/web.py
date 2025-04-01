@@ -457,8 +457,8 @@ def check_url(url, length=False, real_url=False):
                 else:
                     return 0
 
-            # 状态码 > 299，表示请求失败，视为不可用
-            if r.status_code > 299:
+            # 状态码 > 299，表示请求失败，视为不可用, 405 表示请求方法不支持, 改为GET单独处理
+            if r.status_code > 299 and r.status_code != 405:
                 error_info = f"{r.status_code} {url}"
                 signal.add_log(f"🔴 请求失败！ 重试: [{j + 1}/{retry_times}] {error_info}")
                 continue
@@ -488,9 +488,9 @@ def check_url(url, length=False, real_url=False):
                     signal.add_log(f"🔴 检测未通过！当前图片已被网站删除 {url}")
                     return 0
 
-            # 获取文件大小。如果没有获取到文件大小，尝试下载15k数据，如果失败，视为不可用
+            # 获取文件大小。如果没有获取到文件大小或 状态码 = 405，尝试下载15k数据，如果失败，视为不可用
             content_length = r.headers.get("Content-Length")
-            if not content_length:
+            if not content_length or r.status_code == 405:
                 response = requests.get(
                     true_url, headers=headers, proxies=proxies, timeout=timeout, verify=False, stream=True
                 )
@@ -500,9 +500,9 @@ def check_url(url, length=False, real_url=False):
                     i += 1
                     if i == 3:
                         response.close()
-                        signal.add_log(f"✅ 检测通过！未返回大小，预下载15k通过 {true_url}")
+                        signal.add_log(f"✅ 检测通过！预下载15k通过 {true_url}")
                         return 10240 if length else true_url
-                signal.add_log(f"🔴 检测未通过！未返回大小，预下载15k失败 {true_url}")
+                signal.add_log(f"🔴 检测未通过！预下载15k失败 {true_url}")
                 return 0
 
             # 如果返回内容的文件大小 < 8k，视为不可用
@@ -562,7 +562,7 @@ def get_avsox_domain():
 
 def get_amazon_data(req_url):
     """
-    获取 Amazon 数据，修改地区为540-0002
+    获取 Amazon 数据
     """
     headers = {
         "accept-encoding": "gzip, deflate, br",
@@ -595,70 +595,6 @@ def get_amazon_data(req_url):
 
         if not result:
             return False, html_info
-
-    if "540-0002" not in html_info:
-        try:
-            # 获取 anti_csrftoken_a2z
-            anti_csrftoken_a2z = re.findall(r"anti-csrftoken-a2z([^}]+)", html_info)[0].replace("&quot;", "").strip(":")
-            session_id = re.findall(r'sessionId: "([^"]+)', html_info)[0]
-            ubid_acbjp = ""
-            if "ubid-acbjp" in str(result):
-                try:
-                    ubid_acbjp = result["set-cookie"]
-                except:
-                    try:
-                        ubid_acbjp = re.findall(r"ubid-acbjp=([^ ]+)", str(result))[0]
-                    except:
-                        pass
-            headers_o = {
-                "Anti-csrftoken-a2z": anti_csrftoken_a2z,
-                "cookie": f"session-id={session_id}; ubid_acbjp={ubid_acbjp}",
-            }
-            headers.update(headers_o)
-            mid_url = (
-                "https://www.amazon.co.jp/portal-migration/hz/glow/get-rendered-toaster"
-                "?pageType=Search&aisTransitionState=in&rancorLocationSource=REALM_DEFAULT&_="
-            )
-            result, html = curl_html(mid_url, headers=headers)
-            try:
-                anti_csrftoken_a2z = re.findall(r'csrfToken="([^"]+)', html)[0]
-                ubid_acbjp = re.findall(r"ubid-acbjp=([^ ]+)", str(result))[0]
-            except:
-                pass
-
-            # 修改配送地址为日本，这样结果多一些
-            headers_o = {
-                "Anti-csrftoken-a2z": anti_csrftoken_a2z,
-                "Content-length": "140",
-                "Content-Type": "application/json",
-                "cookie": f"session-id={session_id}; ubid_acbjp={ubid_acbjp}",
-            }
-            headers.update(headers_o)
-            post_url = "https://www.amazon.co.jp/portal-migration/hz/glow/address-change?actionSource=glow"
-            data = {
-                "locationType": "LOCATION_INPUT",
-                "zipCode": "540-0002",
-                "storeContext": "generic",
-                "deviceType": "web",
-                "pageType": "Search",
-                "actionSource": "glow",
-            }
-            result, html = post_html(post_url, json=data, headers=headers)
-            if result:
-                if "540-0002" in str(html):
-                    headers = {
-                        "Host": "www.amazon.co.jp",
-                        "User-Agent": get_user_agent(),
-                    }
-                    result, html_info = curl_html(req_url, headers=headers)
-                else:
-                    print("Amazon 修改地区失败: ", req_url, str(result), str(html))
-            else:
-                print("Amazon 修改地区异常: ", req_url, str(result), str(html))
-
-        except Exception as e:
-            print("Amazon 修改地区出错: ", req_url, str(e))
-            print(traceback.format_exc())
 
     return result, html_info
 
