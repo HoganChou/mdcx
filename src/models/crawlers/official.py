@@ -193,6 +193,7 @@ def main(
                     "title": title,
                     "originaltitle": title,
                     "actor": actor,
+                    "set": actor,
                     "outline": outline,
                     "originalplot": outline,
                     "tag": tag,

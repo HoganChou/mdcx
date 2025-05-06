@@ -80,7 +80,7 @@ def write_nfo(
     }
     for key, value in rep_word.items():
         for each in key_word:
-            json_data_nfo[each] = str(json_data_nfo[each]).replace(key, value)
+            json_data_nfo[each] = str(json_data_nfo.get(each,"")).replace(key, value)
     # 获取字段
     nfo_include_new = config.nfo_include_new
     c_word = json_data_nfo["c_word"]
@@ -316,11 +316,11 @@ def write_nfo(
             if sets:
                 sets_list = re.split(r"[,，]", sets)  # sets str转sets_list
                 sets_list = [sets.strip() for sets in sets_list if sets.strip()]  #去除空白
-            if sets_list:
-                for each in sets_list:
-                     print("  <set>", file=code)
-                     print("    <name>" + each + "</name>", file=code)
-                     print("  </set>", file=code)
+                if sets_list:
+                    for each in sets_list:
+                        print("  <set>", file=code)
+                        print("    <name>" + each + "</name>", file=code)
+                        print("  </set>", file=code)
             # 输出合集(使用演员)
             if "actor_set," in nfo_include_new and actor and actor != "未知演员" and actor != "未知演員":
                 actor_list = re.split(r"[,，]", actor)  # 字符串转列表
