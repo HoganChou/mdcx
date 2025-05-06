@@ -751,17 +751,17 @@ def ping_host(host_address):
     )
 
 
-def check_version():
-    if config.update_check == "on":
-        url = "https://api.github.com/repos/sqzw-x/mdcx/releases/latest"
-        _, res_json = get_html(url, json_data=True)
-        if isinstance(res_json, dict):
-            try:
-                latest_version = res_json["tag_name"]
-                latest_version = int(latest_version)
-                return latest_version
-            except:
-                signal.add_log(f"❌ 获取最新版本失败！{res_json}")
+# def check_version():
+#     if config.update_check == "on":
+#         url = "https://api.github.com/repos/sqzw-x/mdcx/releases/latest"
+#         _, res_json = get_html(url, json_data=True)
+#         if isinstance(res_json, dict):
+#             try:
+#                 latest_version = res_json["tag_name"]
+#                 latest_version = int(latest_version)
+#                 return latest_version
+#             except:
+#                 signal.add_log(f"❌ 获取最新版本失败！{res_json}")
 
 
 def check_theporndb_api_token():

@@ -99,8 +99,8 @@ class MyMAinWindow(QMainWindow):
         super().__init__(parent)
 
         # region 初始化需要的变量
-        self.localversion = config.local_version  # 当前版本号
-        self.new_version = "\n🔍 点击检查最新版本"  # 有版本更新时在左下角显示的新版本信息
+        self.localversion = "V2.0"  # 当前版本号
+        # self.new_version = "\n🔍 点击检查最新版本"  # 有版本更新时在左下角显示的新版本信息
         self.json_data = {}  # 当前树状图选中文件的json_data
         self.img_path = ""  # 当前树状图选中文件的图片地址
         self.m_drag = False  # 允许鼠标拖动的标识
@@ -122,9 +122,9 @@ class MyMAinWindow(QMainWindow):
         self.timer.start(100)  # 设置间隔100毫秒
         self.timer_scrape = QTimer()  # 初始化一个定时器，用于间隔刮削
         self.timer_scrape.timeout.connect(self.auto_scrape)
-        self.timer_update = QTimer()  # 初始化一个定时器，用于检查更新
-        self.timer_update.timeout.connect(check_version)
-        self.timer_update.start(43200000)  # 设置检查间隔12小时
+        # self.timer_update = QTimer()  # 初始化一个定时器，用于检查更新
+        # self.timer_update.timeout.connect(check_version)
+        # self.timer_update.start(43200000)  # 设置检查间隔12小时
         self.timer_remain_task = QTimer()  # 初始化一个定时器，用于显示保存剩余任务
         self.timer_remain_task.timeout.connect(save_remain_list)
         self.timer_remain_task.start(1500)  # 设置间隔1.5秒
@@ -549,25 +549,21 @@ class MyMAinWindow(QMainWindow):
             signal.show_log_text(traceback.format_exc())
 
     def _show_version_thread(self):
-        version_info = f"基于 MDC-GUI 修改 当前版本: {self.localversion}"
-        download_link = ""
-        latest_version = check_version()
-        if latest_version:
-            if int(self.localversion) < int(latest_version):
-                self.new_version = f"\n🍉 有新版本了！（{latest_version}）"
-                signal.show_scrape_info()
-                self.Ui.label_show_version.setCursor(Qt.OpenHandCursor)  # 设置鼠标形状为十字形
-                version_info = f'基于 MDC-GUI 修改 · 当前版本: {self.localversion} （ <font color="red" >最新版本是: {latest_version}，请及时更新！🚀 </font>）'
-                download_link = ' ⬇️ <a href="https://github.com/sqzw-x/mdcx/releases">下载新版本</a>'
-            else:
-                version_info = f'基于 MDC-GUI 修改 · 当前版本: {self.localversion} （ <font color="green">你使用的是最新版本！🎉 </font>）'
-
-        feedback = f' 💌 问题反馈: <a href="https://github.com/sqzw-x/mdcx/issues/new">GitHub Issues</a>'
+        version_info = f"基于 MDCx 修改 当前版本: {self.localversion}"
+        # download_link = ""
+        # latest_version = check_version()
+        # if latest_version:
+        #     if int(self.localversion) < int(latest_version):
+        #         self.new_version = f"\n🍉 有新版本了！（{latest_version}）"
+        #         signal.show_scrape_info()
+        #         self.Ui.label_show_version.setCursor(Qt.OpenHandCursor)  # 设置鼠标形状为十字形
+        #         version_info = f'基于 MDCx 修改 · 当前版本: {self.localversion} （ <font color="red" >最新版本是: {latest_version}，请及时更新！🚀 </font>）'
+        #         download_link = ' ⬇️ <a href="https://github.com/sqzw-x/mdcx/releases">下载新版本</a>'
+        #     else:
+        #         version_info = f'基于 MDC-x 修改 · 当前版本: {self.localversion} （ <font color="green">你使用的是最新版本！🎉 </font>）'
 
         # 显示版本信息和反馈入口
         signal.show_log_text(version_info)
-        if feedback or download_link:
-            self.main_logs_show.emit(f"{feedback}{download_link}")
         signal.show_log_text("================================================================================")
         self.pushButton_check_javdb_cookie_clicked()  # 检测javdb cookie
         self.pushButton_check_javbus_cookie_clicked()  # 检测javbus cookie
