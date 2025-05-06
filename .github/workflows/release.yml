@@ -71,15 +71,6 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Before setup-python
-              if: ${{ matrix.build == 'macos' }}
-              run: |
-                  # 如果指定了cv，则修改requirements-mac.txt里的opencv版本
-                  cvVersion="${{ matrix.cv }}"
-                  if [ -n "$cvVersion" ]; then
-                    sed -i '' "s/opencv-contrib-python-headless==.*/opencv-contrib-python-headless==${cvVersion}/" requirements-mac.txt
-                  fi
-
             - name: Set up Python - cache pip
               if: ${{ matrix.cache != 'none' }}
               uses: actions/setup-python@v4
@@ -103,15 +94,6 @@ jobs:
             - name: Build Windows app - Windows
               if: ${{ matrix.build == 'windows' }}
               run: ./build-action
-
-            - name: Get changelog
-              id: get-changelog
-              if: ${{ matrix.build == 'macos' }}
-              run: |
-                  echo 'CHANGELOG<<EOF' >> $GITHUB_OUTPUT
-                  cat changelog.md >> $GITHUB_OUTPUT
-                  echo 'EOF' >> $GITHUB_OUTPUT
-
             - name: Create Release - Windows
               uses: svenstaro/upload-release-action@2.7.0
               if: ${{ matrix.build == 'windows' }}
