@@ -607,14 +607,14 @@ class MyMAinWindow(QMainWindow):
         except:
             signal.show_traceback_log(traceback.format_exc())
 
-    def label_version_clicked(self, test):
-        try:
-            if "🔍" in self.new_version:
-                webbrowser.open("https://github.com/sqzw-x/mdcx/releases/tag/daily_release")
-            else:
-                webbrowser.open("https://github.com/sqzw-x/mdcx/releases")
-        except:
-            signal.show_traceback_log(traceback.format_exc())
+    # def label_version_clicked(self, test):
+    #     try:
+    #         if "🔍" in self.new_version:
+    #             webbrowser.open("https://github.com/sqzw-x/mdcx/releases/tag/daily_release")
+    #         else:
+    #             webbrowser.open("https://github.com/sqzw-x/mdcx/releases")
+    #     except:
+    #         signal.show_traceback_log(traceback.format_exc())
 
     # endregion
 
@@ -1242,6 +1242,7 @@ class MyMAinWindow(QMainWindow):
             runtime = json_data.get("runtime")
             director = json_data.get("director")
             actor = json_data.get("actor")
+            sets = json_data.get("set")
             release = json_data.get("release")
             tag = json_data.get("tag")
             number = json_data.get("number")
@@ -1261,6 +1262,10 @@ class MyMAinWindow(QMainWindow):
             if json_data["all_actor"] and "actor_all," in config.nfo_include_new:
                 actor = str(json_data["all_actor"])
             self.Ui.lineEdit_nfo_actor.setText(actor)
+            if sets: 
+                self.Ui.lineEdit_nfo_set.setText(sets)
+            else:
+                self.Ui.lineEdit_nfo_set.setText(actor)
             self.Ui.lineEdit_nfo_year.setText(year)
             self.Ui.lineEdit_nfo_title.setText(title)
             self.Ui.lineEdit_nfo_originaltitle.setText(originaltitle)
@@ -1300,6 +1305,7 @@ class MyMAinWindow(QMainWindow):
             if "actor_all," in config.nfo_include_new:
                 json_data["all_actor"] = self.Ui.lineEdit_nfo_actor.text()
             json_data["actor"] = self.Ui.lineEdit_nfo_actor.text()
+            json_data["set"] = self.Ui.lineEdit_nfo_set.text()
             json_data["year"] = self.Ui.lineEdit_nfo_year.text()
             json_data["title"] = self.Ui.lineEdit_nfo_title.text()
             json_data["originaltitle"] = self.Ui.lineEdit_nfo_originaltitle.text()
@@ -1344,7 +1350,7 @@ class MyMAinWindow(QMainWindow):
             elif config.soft_link == 2:
                 scrape_info = "🍯 硬链接 · 开\n" + scrape_info
             after_info = f"\n{scrape_info}\n🛠 {config.file}\n🐰 MDCx {self.localversion}"
-            self.label_show_version.emit(before_info + after_info + self.new_version)
+            self.label_show_version.emit(before_info + after_info)
         except:
             signal.show_traceback_log(traceback.format_exc())
 

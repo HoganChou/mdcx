@@ -52,6 +52,7 @@ def write_nfo(
         "outline",
         "originalplot",
         "actor",
+        "set",
         "series",
         "director",
         "studio",
@@ -95,6 +96,7 @@ def write_nfo(
     runtime = json_data_nfo["runtime"]
     director = json_data_nfo["director"]
     actor = json_data_nfo["actor"]
+    sets = json_data_nfo["set"]
     release = json_data_nfo["release"]
     tag = json_data_nfo["tag"]
     number = json_data_nfo["number"]
@@ -127,7 +129,7 @@ def write_nfo(
     first_letter = get_number_first_letter(number)
 
     # 处理演员
-    first_actor = actor.split(",").pop(0)
+    first_actor = re.split(r"[,，]", actor).pop(0)
     temp_all_actor = deal_actor_more(json_data["all_actor"])
     temp_actor = deal_actor_more(actor)
 
@@ -272,7 +274,7 @@ def write_nfo(
             if "actor," in nfo_include_new:
                 if not actor:
                     actor = config.actor_no_name
-                actor_list = actor.split(",")  # 字符串转列表
+                actor_list = re.split(r"[,，]", actor) # 字符串转列表
                 actor_list = [actor.strip() for actor in actor_list if actor.strip()]  # 去除空白
             if actor_list:
                 for each in actor_list:
@@ -310,10 +312,18 @@ def write_nfo(
             # 输出时长
             if str(runtime) and "runtime," in nfo_include_new:
                 print("  <runtime>" + str(runtime).replace(" ", "") + "</runtime>", file=code)
-
+            #有自定义合集的时候输出自定义合集
+            if sets:
+                sets_list = re.split(r"[,，]", sets)  # sets str转sets_list
+                sets_list = [sets.strip() for sets in sets_list if sets.strip()]  #去除空白
+            if sets_list:
+                for each in sets_list:
+                     print("  <set>", file=code)
+                     print("    <name>" + each + "</name>", file=code)
+                     print("  </set>", file=code)
             # 输出合集(使用演员)
             if "actor_set," in nfo_include_new and actor and actor != "未知演员" and actor != "未知演員":
-                actor_list = actor.split(",")  # 字符串转列表
+                actor_list = re.split(r"[,，]", actor)  # 字符串转列表
                 actor_list = [actor.strip() for actor in actor_list if actor.strip()]  # 去除空白
                 if actor_list:
                     for each in actor_list:
@@ -450,6 +460,7 @@ def get_nfo_data(
         for key, value in config.special_word.items():
             originaltitle_amazon = originaltitle_amazon.replace(value, key)
     actor = ",".join(xml_nfo.xpath("//actor/name/text()"))
+    sets = ",".join(xml_nfo.xpath("//set/name/text()"))
     originalplot = "".join(xml_nfo.xpath("//originalplot/text()"))
     outline = ""
     temp_outline = re.findall(r"<plot>(.+)</plot>", content)
@@ -561,10 +572,11 @@ def get_nfo_data(
     if originaltitle and langid.classify(originaltitle)[0] == "ja":
         json_data["originaltitle_amazon"] = originaltitle
         if actor:
-            json_data["actor_amazon"] = actor.split(",")
+            json_data["actor_amazon"] = re.split(r"[,，]", actor)
     json_data["number"] = number
     json_data["letters"] = letters
     json_data["actor"] = actor
+    json_data["set"] = sets
     json_data["all_actor"] = actor
     json_data["outline"] = outline
     if config.outline_language == "jp" and "read_translate_again" in config.read_mode and originalplot:

@@ -60,7 +60,7 @@ appName="MDCx"
 pyi-makespec \
   --name MDCx \
   --osx-bundle-identifier com.mdcuniverse.mdcx \
-  -F -w main.py \
+  -w main.py \
   -p "./src" \
   --add-data "resources:resources" \
   --add-data "libs:." \
@@ -68,7 +68,8 @@ pyi-makespec \
   --hidden-import socks \
   --hidden-import urllib3 \
   --hidden-import _cffi_backend \
-  --collect-all curl_cffi
+  --collect-all curl_cffi\
+  --add-data "/opt/homebrew/lib/girepository-1.0:gi_typelibs"
 
 rm -rf ./dist
 
@@ -114,6 +115,12 @@ echo -e "$NEW_CONTENT" > MDCx.spec
 
 # Build the app
 pyinstaller MDCx.spec
+
+# 预编译字节码
+python3 -m compileall dist/MDCx.app/Contents/Resources
+
+# 代码签名（可选，自签名）
+codesign --force --deep --sign - dist/MDCx.app
 
 # Remove unnecessary files
 rm -rf ./build

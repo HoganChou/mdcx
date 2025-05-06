@@ -226,7 +226,7 @@ def Init_Singal(self):
     self.Ui.label_number.mousePressEvent = self.label_number_clicked
     self.Ui.label_source.mousePressEvent = self.label_number_clicked
     self.Ui.label_actor.mousePressEvent = self.label_actor_clicked
-    self.Ui.label_show_version.mousePressEvent = self.label_version_clicked
+    # self.Ui.label_show_version.mousePressEvent = self.label_version_clicked
     self.Ui.label_local_number.mousePressEvent = self.label_local_number_clicked
 
     def n(a): ...  # mousePressEvent 的返回值必须是 None, 用这个包装一下
