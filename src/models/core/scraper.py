@@ -170,7 +170,7 @@ def _scrape_one_file(file_path: str, file_info: tuple, file_mode: FileMode) -> t
     # 显示json_data结果或日志
     json_data["failed_folder"] = failed_folder
     if not show_data_result(json_data, start_time):
-        return False, json_data  # 返回MDCx1_1main, 继续处理下一个文件
+        return False, json_data  # 返回MDCα1_1main, 继续处理下一个文件
 
     # 映射或翻译
     # 当不存在已刮削数据，或者读取模式允许翻译映射时才进行映射翻译
@@ -227,7 +227,7 @@ def _scrape_one_file(file_path: str, file_info: tuple, file_mode: FileMode) -> t
         thumb_new_path_with_filename,
         poster_new_path_with_filename,
     ):
-        return False, json_data  # 返回MDCx1_1main, 继续处理下一个文件
+        return False, json_data  # 返回MDCα1_1main, 继续处理下一个文件
 
     # 初始化图片已下载地址的字典
     if not Flags.file_done_dic.get(json_data["number"]):
@@ -266,7 +266,7 @@ def _scrape_one_file(file_path: str, file_info: tuple, file_mode: FileMode) -> t
             save_success_list(file_path, file_new_path)  # 保存成功列表
             return True, json_data
         else:
-            # 返回MDCx1_1main, 继续处理下一个文件
+            # 返回MDCα1_1main, 继续处理下一个文件
             return False, json_data
 
     # 清理旧的thumb、poster、fanart、extrafanart、nfo
@@ -291,14 +291,14 @@ def _scrape_one_file(file_path: str, file_info: tuple, file_mode: FileMode) -> t
         if file_can_download:
             # 下载thumb
             if not thumb_download(json_data, folder_new_path, thumb_final_path):
-                return False, json_data  # 返回MDCx1_1main, 继续处理下一个文件
+                return False, json_data  # 返回MDCα1_1main, 继续处理下一个文件
 
             # 下载艺术图
             fanart_download(json_data, fanart_final_path)
 
             # 下载poster
             if not poster_download(json_data, folder_new_path, poster_final_path):
-                return False, json_data  # 返回MDCx1_1main, 继续处理下一个文件
+                return False, json_data  # 返回MDCα1_1main, 继续处理下一个文件
 
             # 清理冗余图片
             _pic_some_deal(json_data, thumb_final_path, fanart_final_path)
@@ -329,7 +329,7 @@ def _scrape_one_file(file_path: str, file_info: tuple, file_mode: FileMode) -> t
 
     # 移动文件
     if not move_movie(json_data, file_path, file_new_path):
-        return False, json_data  # 返回MDCx1_1main, 继续处理下一个文件
+        return False, json_data  # 返回MDCα1_1main, 继续处理下一个文件
     save_success_list(file_path, file_new_path)  # 保存成功列表
 
     # 创建软链接及复制文件
@@ -628,7 +628,7 @@ def scrape(file_mode: FileMode, movie_list: Optional[list[str]]) -> None:
 
         # 创建线程池
         Flags.next_start_time = time.time()
-        Flags.pool = ThreadPoolExecutor(thread_number, "MDCx-Pool")
+        Flags.pool = ThreadPoolExecutor(thread_number, "MDCα-Pool")
         Flags.pool.map(_scrape_exec_thread, task_list)
 
         # self.extrafanart_pool.shutdown(wait=True)
@@ -697,7 +697,7 @@ def start_new_scrape(file_mode: FileMode, movie_list: Optional[list[str]] = None
     signal.exec_set_processbar.emit(0)
     try:
         Flags.start_time = time.time()
-        t = threading.Thread(target=scrape, name="MDCx-Scrape-Thread", args=(file_mode, movie_list))
+        t = threading.Thread(target=scrape, name="MDCα-Scrape-Thread", args=(file_mode, movie_list))
         Flags.threads_list.append(t)
         Flags.stop_other = False
         t.start()

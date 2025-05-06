@@ -170,7 +170,7 @@ cython_debug/
 .vscode/
 
 config.ini
-MDCx.config
+MDCα.config
 userdata/
 Log/
 test

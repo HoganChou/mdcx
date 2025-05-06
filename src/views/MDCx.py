@@ -10796,7 +10796,7 @@ class Ui_MDCx(object):
 
     def retranslateUi(self, MDCx):
         _translate = QtCore.QCoreApplication.translate
-        MDCx.setWindowTitle(_translate("MDCx", "MDCx"))
+        MDCx.setWindowTitle(_translate("MDCx", "MDCα"))
         self.pushButton_start_cap.setText(_translate("MDCx", "开始"))
         self.label_number1.setText(_translate("MDCx", "番号："))
         self.label_13.setText(_translate("MDCx", "日期："))
@@ -12036,7 +12036,6 @@ class Ui_MDCx(object):
                 "<p style='line-height:15px'>自定义刮削指定网站时使用的网址，目前支持以下网站：<br>\n"
                 "    &nbsp;&nbsp;&nbsp;&nbsp;airavcc  avsex  hdouban  iqqtv  lulubar  mdtv  javbus  javdb  javlibrary* <br>\n"
                 "    &nbsp;&nbsp;&nbsp;&nbsp;* 配置后将直连访问<br>\n"
-                '<br>欢迎 pr 实现其它网站的自定义网址功能，参考：<a href="https://github.com/sqzw-x/mdcx/wiki/自定义网址"><span style="color:#094fd1;" > Github wiki<span/><a/>\n'
                 "</p>",
             )
         )
@@ -12156,7 +12155,6 @@ class Ui_MDCx(object):
                 '<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">           </p>\n'
                 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas','PingFang SC','Microsoft YaHei UI'; font-size:13pt;\">· Movie_Data_Capture 项目地址：https://github.com/yoshiko2/Movie_Data_Capture</span>           </p>\n"
                 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas','PingFang SC','Microsoft YaHei UI'; font-size:13pt;\">· AVDC-GUI 项目地址：https://github.com/moyy996/AVDC</span>           </p>\n"
-                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas','PingFang SC','Microsoft YaHei UI'; font-size:13pt;\">· MDCx-docker 项目地址：https://github.com/northsea4/mdcx-docker</span>           </p>\n"
                 '<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><br />           </p>\n'
                 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas','PingFang SC','Microsoft YaHei UI'; font-size:13pt;\">使用说明 （内容来自 AVDC-GUI ：https://github.com/moyy996/AVDC ）</span>           </p>\n"
                 '<p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><br />           </p>\n'

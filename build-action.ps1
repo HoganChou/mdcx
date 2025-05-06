@@ -1,7 +1,7 @@
 $env:PYTHONPATH = "$PWD\src"
 
-python -m PyInstaller -n MDCx -F `
--i resources/Img/MDCx.ico `
+python -m PyInstaller -n MDCα -F `
+-i resources/Img/MDCα.ico `
 -w main.py `
 -p "./src" `
 --add-data "resources;resources" `

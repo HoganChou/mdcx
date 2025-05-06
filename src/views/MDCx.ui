@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>MDCx</class>
- <widget class="QMainWindow" name="MDCx">
+ <widget class="QMainWindow" name="MDCα">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>MDCx</string>
+   <string>MDCα</string>
   </property>
   <property name="toolTipDuration">
    <number>500000</number>
@@ -1352,7 +1352,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </property>
       <property name="icon">
        <iconset>
-        <normalon>../../MDCx-py-20220407/edit.png</normalon>
+        <normalon>../../MDCα-py-20220407/edit.png</normalon>
        </iconset>
       </property>
       <property name="iconSize">
@@ -1467,7 +1467,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </property>
       <property name="icon">
        <iconset>
-        <normalon>../../MDCx-py-20220407/edit.png</normalon>
+        <normalon>../../MDCα-py-20220407/edit.png</normalon>
        </iconset>
       </property>
       <property name="iconSize">
@@ -22749,7 +22749,6 @@ font: &quot;Courier&quot;;</string>
             <string>&lt;p style='line-height:15px'&gt;自定义刮削指定网站时使用的网址，目前支持以下网站：&lt;br&gt;
     &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;airavcc  avsex  hdouban  iqqtv  lulubar  mdtv  javbus  javdb  javlibrary* &lt;br&gt;
     &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;* 配置后将直连访问&lt;br&gt;
-&lt;br&gt;欢迎 pr 实现其它网站的自定义网址功能，参考：&lt;a href=&quot;https://github.com/sqzw-x/mdcx/wiki/自定义网址&quot;&gt;&lt;span style=&quot;color:#094fd1;&quot; &gt; Github wiki&lt;span/&gt;&lt;a/&gt;
 &lt;/p&gt;</string>
            </property>
            <property name="openExternalLinks">
@@ -24594,7 +24593,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;           &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas','PingFang SC','Microsoft YaHei UI'; font-size:13pt;&quot;&gt;· Movie_Data_Capture 项目地址：https://github.com/yoshiko2/Movie_Data_Capture&lt;/span&gt;           &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas','PingFang SC','Microsoft YaHei UI'; font-size:13pt;&quot;&gt;· AVDC-GUI 项目地址：https://github.com/moyy996/AVDC&lt;/span&gt;           &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas','PingFang SC','Microsoft YaHei UI'; font-size:13pt;&quot;&gt;· MDCx-docker 项目地址：https://github.com/northsea4/mdcx-docker&lt;/span&gt;           &lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;           &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas','PingFang SC','Microsoft YaHei UI'; font-size:13pt;&quot;&gt;使用说明 （内容来自 AVDC-GUI ：https://github.com/moyy996/AVDC ）&lt;/span&gt;           &lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;           &lt;/p&gt;

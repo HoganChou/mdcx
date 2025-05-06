@@ -31,7 +31,6 @@ from models.base.path import get_main_path, get_path
 from models.base.utils import _async_raise, add_html, convert_path, get_current_time, get_used_time, kill_a_thread
 from models.base.web import (
     check_theporndb_api_token,
-    check_version,
     get_avsox_domain,
     ping_host,
     scraper_html,
@@ -99,7 +98,7 @@ class MyMAinWindow(QMainWindow):
         super().__init__(parent)
 
         # region 初始化需要的变量
-        self.localversion = "V2.0"  # 当前版本号
+        self.localversion = "V1.0"  # 当前版本号
         # self.new_version = "\n🔍 点击检查最新版本"  # 有版本更新时在左下角显示的新版本信息
         self.json_data = {}  # 当前树状图选中文件的json_data
         self.img_path = ""  # 当前树状图选中文件的图片地址
@@ -429,7 +428,7 @@ class MyMAinWindow(QMainWindow):
             self.raise_()
             box = QMessageBox(QMessageBox.Warning, "退出", "确定要退出吗？")
             box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            box.button(QMessageBox.Yes).setText("退出 MDCx")
+            box.button(QMessageBox.Yes).setText("退出 MDCα")
             box.button(QMessageBox.No).setText("取消")
             box.setDefaultButton(QMessageBox.No)
             reply = box.exec()
@@ -549,7 +548,7 @@ class MyMAinWindow(QMainWindow):
             signal.show_log_text(traceback.format_exc())
 
     def _show_version_thread(self):
-        version_info = f"基于 MDCx 修改 当前版本: {self.localversion}"
+        version_info = f"基于 MDCα 修改 当前版本: {self.localversion}"
         # download_link = ""
         # latest_version = check_version()
         # if latest_version:
@@ -557,7 +556,7 @@ class MyMAinWindow(QMainWindow):
         #         self.new_version = f"\n🍉 有新版本了！（{latest_version}）"
         #         signal.show_scrape_info()
         #         self.Ui.label_show_version.setCursor(Qt.OpenHandCursor)  # 设置鼠标形状为十字形
-        #         version_info = f'基于 MDCx 修改 · 当前版本: {self.localversion} （ <font color="red" >最新版本是: {latest_version}，请及时更新！🚀 </font>）'
+        #         version_info = f'基于 MDCα 修改 · 当前版本: {self.localversion} （ <font color="red" >最新版本是: {latest_version}，请及时更新！🚀 </font>）'
         #         download_link = ' ⬇️ <a href="https://github.com/sqzw-x/mdcx/releases">下载新版本</a>'
         #     else:
         #         version_info = f'基于 MDC-x 修改 · 当前版本: {self.localversion} （ <font color="green">你使用的是最新版本！🎉 </font>）'
@@ -770,7 +769,7 @@ class MyMAinWindow(QMainWindow):
     ):
         thread_list = threading.enumerate()
         new_thread_list = []
-        [new_thread_list.append(i) for i in thread_list if "MDCx-Pool" in i.getName()]  # 线程池的线程
+        [new_thread_list.append(i) for i in thread_list if "MDCα-Pool" in i.getName()]  # 线程池的线程
         [new_thread_list.append(i) for i in Flags.threads_list]  # 其他开启的线程
         other_name = new_thread_list[-1].getName()
         Flags.total_kills = len(new_thread_list)
@@ -790,7 +789,7 @@ class MyMAinWindow(QMainWindow):
         )
         signal.stop = True
         for each in new_thread_list:  # 线程池的线程
-            if "MDCx-Pool" not in each.getName():
+            if "MDCα-Pool" not in each.getName():
                 kill_a_thread(each)
             while each.is_alive():
                 pass
@@ -1345,7 +1344,7 @@ class MyMAinWindow(QMainWindow):
                 scrape_info = "🍯 软链接 · 开\n" + scrape_info
             elif config.soft_link == 2:
                 scrape_info = "🍯 硬链接 · 开\n" + scrape_info
-            after_info = f"\n{scrape_info}\n🛠 {config.file}\n🐰 MDCx {self.localversion}"
+            after_info = f"\n{scrape_info}\n🛠 {config.file}\n🐰 MDCα {self.localversion}"
             self.label_show_version.emit(before_info + after_info)
         except:
             signal.show_traceback_log(traceback.format_exc())

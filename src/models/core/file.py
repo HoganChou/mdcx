@@ -536,8 +536,8 @@ def move_movie(json_data: MoveContext, file_path: str, file_new_path: str) -> bo
             if json_data["cd_part"]:
                 temp_folder, temp_file = split_path(file_new_path)
                 if temp_file not in os.listdir(temp_folder):
-                    move_file(file_path, file_new_path + ".MDCx.tmp")
-                    move_file(file_new_path + ".MDCx.tmp", file_new_path)
+                    move_file(file_path, file_new_path + ".MDCα.tmp")
+                    move_file(file_new_path + ".MDCα.tmp", file_new_path)
             LogBuffer.log().write(f"\n 🍀 Movie done! \n 🙉 [Movie] {file_new_path}")
             json_data["file_path"] = file_new_path
             return True

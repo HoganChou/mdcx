@@ -4,7 +4,7 @@ $env:PYTHONPATH = "$PWD\src"
 $nuitkaArgs = @(
     '--standalone' # 包含 Python
     '--onefile'
-    '--windows-icon-from-ico=resources/Img/MDCx.ico'
+    '--windows-icon-from-ico=resources/Img/MDCα.ico'
     '--include-module=_cffi_backend'
     '--include-module=_distutils_hack'
     '--include-data-dir=resources=resources'

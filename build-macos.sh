@@ -2,36 +2,34 @@
 
 set -e
 
-while [[ $# -gt 0 ]]
-do
+while [[ $# -gt 0 ]]; do
   key="$1"
   case $key in
-    --version|-v)
-      APP_VERSION="$2"
-      shift
-      shift
-      ;;
-    --create-dmg|-dmg)
-      CREATE_DMG=true
-      shift
-      ;;
-    --help|-h)
-      echo "Usage: build-macos.sh [options]"
-      echo "Options:"
-      echo "  --version, -v       Specify the version number. \
+  --version | -v)
+    APP_VERSION="$2"
+    shift
+    shift
+    ;;
+  --create-dmg | -dmg)
+    CREATE_DMG=true
+    shift
+    ;;
+  --help | -h)
+    echo "Usage: build-macos.sh [options]"
+    echo "Options:"
+    echo "  --version, -v       Specify the version number. \
       The value within config.ini.default file will be usded if not specified."
-      echo "  --create-dmg, -dmg  Create DMG file. Default is false."
-      exit 0
-      ;;
-    *)
-      shift
-      ;;
+    echo "  --create-dmg, -dmg  Create DMG file. Default is false."
+    exit 0
+    ;;
+  *)
+    shift
+    ;;
   esac
 done
 
-
 # 从配置文件获取应用版本
-getAppVersionFromConfig () {
+getAppVersionFromConfig() {
   local configPath="$1"
   if [[ -f "$configPath" ]]; then
     local version=$(cat $configPath | grep -oi 'version\s*=\s*[0-9]\+' | grep -oi '[0-9]\+$')
@@ -40,7 +38,6 @@ getAppVersionFromConfig () {
     echo ''
   fi
 }
-
 
 # Check APP_VERSION
 if [ -z "$APP_VERSION" ]; then
@@ -54,22 +51,20 @@ if [ -z "$APP_VERSION" ]; then
   fi
 fi
 
-
-appName="MDCx"
+appName="MDCα"
 
 pyi-makespec \
-  --name MDCx \
-  --osx-bundle-identifier com.mdcuniverse.mdcx \
+  --name MDCα \
+  --osx-bundle-identifier com.mdcuniverse.mdcα \
   -w main.py \
   -p "./src" \
   --add-data "resources:resources" \
   --add-data "libs:." \
-  --icon resources/Img/MDCx.icns \
+  --icon resources/Img/MDCα.icns \
   --hidden-import socks \
   --hidden-import urllib3 \
   --hidden-import _cffi_backend \
-  --collect-all curl_cffi\
-  --add-data "/opt/homebrew/lib/girepository-1.0:gi_typelibs"
+  --collect-all curl_cffi --add-data "/opt/homebrew/lib/girepository-1.0:gi_typelibs"
 
 rm -rf ./dist
 
@@ -94,13 +89,14 @@ insertAfterLine() {
     else
       newContent+="$lineContent\n"
     fi
-    i=$((i+1))
-  done < "$file"
+    i=$((i + 1))
+  done <"$file"
   echo -e "$newContent"
 }
 
-# Add `info_plist` to `MDCx.spec` file
-INFO_PLIST=$(cat <<EOF
+# Add `info_plist` to `MDCα.spec` file
+INFO_PLIST=$(
+  cat <<EOF
     info_plist={
         'CFBundleShortVersionString': '$APP_VERSION',
         'CFBundleVersion': '$APP_VERSION',
@@ -108,27 +104,25 @@ INFO_PLIST=$(cat <<EOF
 EOF
 )
 
-LINE=$(findLine "MDCx.spec" "bundle_identifier")
-NEW_CONTENT=$(insertAfterLine "MDCx.spec" $LINE "$INFO_PLIST")
-echo -e "$NEW_CONTENT" > MDCx.spec
-
+LINE=$(findLine "MDCα.spec" "bundle_identifier")
+NEW_CONTENT=$(insertAfterLine "MDCα.spec" $LINE "$INFO_PLIST")
+echo -e "$NEW_CONTENT" >MDCα.spec
 
 # Build the app
-pyinstaller MDCx.spec
+pyinstaller MDCα.spec
 
 # 预编译字节码
-python3 -m compileall dist/MDCx.app/Contents/Resources
+python3 -m compileall dist/MDCα.app/Contents/Resources
 
 # 代码签名（可选，自签名）
-codesign --force --deep --sign - dist/MDCx.app
+codesign --force --deep --sign - dist/MDCα.app
 
 # Remove unnecessary files
 rm -rf ./build
 rm *.spec
 
-
 # Install `create-dmg` if `CREATE_DMG` is true
-if [ "$CREATE_DMG" = true ] && ! command -v create-dmg &> /dev/null; then
+if [ "$CREATE_DMG" = true ] && ! command -v create-dmg &>/dev/null; then
   echo "Installing create-dmg..."
   brew install create-dmg
   if [ $? -ne 0 ]; then
@@ -137,14 +131,13 @@ if [ "$CREATE_DMG" = true ] && ! command -v create-dmg &> /dev/null; then
   fi
 fi
 
-
 # Create DMG file
 if [ "$CREATE_DMG" = true ]; then
   echo "Creating DMG file..."
   # https://github.com/create-dmg/create-dmg?tab=readme-ov-file#usage
   create-dmg \
     --volname "$appName" \
-    --volicon "resources/Img/MDCx.icns" \
+    --volicon "resources/Img/MDCα.icns" \
     --window-pos 200 120 \
     --window-size 800 400 \
     --icon-size 80 \

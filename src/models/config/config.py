@@ -11,8 +11,8 @@ from models.config.config_manual import ManualConfig
 
 
 @singleton
-class MDCxConfig(GeneratedConfig, ManualConfig):
-    mark_file_name = "MDCx.config"
+class MDCαConfig(GeneratedConfig, ManualConfig):
+    mark_file_name = "MDCα.config"
 
     def __init__(self):
         self.file = ""
@@ -39,13 +39,13 @@ class MDCxConfig(GeneratedConfig, ManualConfig):
         """
         获取macOS下默认的配置文件夹路径
 
-        ~/.mdcx
+        ~/.mdcα
 
         :return: 配置文件夹路径
         """
 
         home = os.path.expanduser("~")
-        folder_name = ".mdcx"
+        folder_name = ".mdcα"
         config_folder = os.path.join(home, folder_name)
         if not os.path.exists(config_folder):
             os.makedirs(config_folder, exist_ok=True, mode=0o755)
@@ -54,7 +54,7 @@ class MDCxConfig(GeneratedConfig, ManualConfig):
     def get_mark_file_path(self) -> str:
         """
         获取`记录了配置文件路径`的文件的路径。
-        对于macOS，该文件位于`~/.mdcx/MDCx.config`。
+        对于macOS，该文件位于`~/.mdcα/MDCα.config`。
         其他平台，该文件跟应用程序在同一目录下。
         """
 
@@ -420,22 +420,22 @@ statement = {self.statement}
         self.suffix_sort = new_str
 
     def _get_config_path(self):
-        mdcx_config = self.get_mark_file_path()  # 此文件用于记录当前配置文件的绝对路径, 从而实现多配置切换
+        mdcα_config = self.get_mark_file_path()  # 此文件用于记录当前配置文件的绝对路径, 从而实现多配置切换
         # 此文件必须存在, 且与 main.py 或打包的可执行文件在同一目录下.
-        if not os.path.exists(mdcx_config):  # 不存在时, 创建
+        if not os.path.exists(mdcα_config):  # 不存在时, 创建
             if platform.system() == "Darwin":
                 self.path = os.path.join(
                     self.get_mac_default_config_folder(), "config.ini"
-                )  # macOS下默认配置文件: ~/.mdcx/config.ini
+                )  # macOS下默认配置文件: ~/.mdcα/config.ini
             else:
                 self.path = os.path.realpath("config.ini")  # 默认配置文件: 同目录下的 config.ini
             # 设置默认配置文件路径, 若存在则可读取, 否则生成默认配置文件
-            with open(mdcx_config, "w", encoding="UTF-8") as f:
+            with open(mdcα_config, "w", encoding="UTF-8") as f:
                 f.write(self.path)
             if not os.path.exists(self.path):
                 self.init_config()
         else:
-            with open(mdcx_config, encoding="UTF-8") as f:
+            with open(mdcα_config, encoding="UTF-8") as f:
                 self.path = f.read()
 
     def _get_platform_info(self):
@@ -456,7 +456,7 @@ statement = {self.statement}
             self.is_docker = True
 
 
-config: MDCxConfig = MDCxConfig()
+config: MDCαConfig = MDCαConfig()
 
 
 def get_new_str(a: str, wanted=False):

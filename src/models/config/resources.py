@@ -22,7 +22,7 @@ class Resources:
         self.sehua_title_path = self._resource_path("c_number/c_number.json")  # 内置色花数据的文件路径
         self.actor_map_backup_path = self._resource_path("mapping_table/mapping_actor.xml")  # 内置演员映射表的文件路径
         self.info_map_backup_path = self._resource_path("mapping_table/mapping_info.xml")  # 内置信息映射表的文件路径
-        self.icon_ico = self._resource_path("Img/MDCx.ico")  # 任务栏图标
+        self.icon_ico = self._resource_path("Img/MDCα.ico")  # 任务栏图标
         self.right_menu = self._resource_path("Img/menu.svg")  # 主界面菜单按钮
         self.play_icon = self._resource_path("Img/play.svg")  # 主界面播放按钮
         self.open_folder_icon = self._resource_path("Img/folder.svg")  # 主界面打开文件夹按钮

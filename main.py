@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
     if platform.system() != "Windows":
-        app.setWindowIcon(QIcon("resources/Img/MDCx.ico"))  # 设置任务栏图标
+        app.setWindowIcon(QIcon("resources/Img/MDCα.ico"))  # 设置任务栏图标
     ui = MyMAinWindow()
     ui.show()
     app.installEventFilter(ui)

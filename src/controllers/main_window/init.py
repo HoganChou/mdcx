@@ -13,7 +13,7 @@ from models.signals import signal
 
 
 def Init_Ui(self):
-    self.setWindowTitle("MDCx")  # 设置任务栏标题
+    self.setWindowTitle("MDCα")  # 设置任务栏标题
     self.setWindowIcon(QIcon(resources.icon_ico))  # 设置任务栏图标
     self.setWindowOpacity(1.0)  # 设置窗口透明度
     if config.is_windows:
@@ -89,7 +89,7 @@ def Init_Ui(self):
         6，如果网盘里已经有刮削好的内容，想要把刮削信息转移到本地磁盘，同样使用上述工具，勾选【复制已刮削的图片和NFO文件】即可<br/>\
         7，网盘挂载和刮削方法：<br/>\
         -1）使用 CloudDriver、Alist、RaiDrive 等第三方工具挂载网盘<br/>\
-        -2）MDCx 设置待刮削目录为网盘视频目录，输出目录为本地磁盘文件夹<br/>\
+        -2）MDCα 设置待刮削目录为网盘视频目录，输出目录为本地磁盘文件夹<br/>\
         -3）设置中选择「创建软链接」，其他配置设置好后保存配置，点击开始刮削<br/>\
         -4）Emby、Jellyfin 媒体库路径设置为本地刮削后保存的磁盘文件夹扫描即可</p></body></html>""")
     self.Ui.pushButton_tips_hard.setIcon(help_icon)
@@ -282,10 +282,10 @@ def Init_QSystemTrayIcon(self):
     self.tray_icon = QSystemTrayIcon(self)
     self.tray_icon.setIcon(QIcon(resources.icon_ico))
     self.tray_icon.activated.connect(self.tray_icon_click)
-    self.tray_icon.setToolTip(f"MDCx {self.localversion}（左键显示/隐藏 | 右键退出）")
+    self.tray_icon.setToolTip(f"MDCα {self.localversion}（左键显示/隐藏 | 右键退出）")
     show_action = QAction("显示", self)
     hide_action = QAction("隐藏\tQ", self)
-    quit_action = QAction("退出 MDCx", self)
+    quit_action = QAction("退出 MDCα", self)
     show_action.triggered.connect(self.tray_icon_show)
     hide_action.triggered.connect(self.hide)
     quit_action.triggered.connect(self.ready_to_exit)
@@ -296,7 +296,7 @@ def Init_QSystemTrayIcon(self):
     tray_menu.addAction(quit_action)
     self.tray_icon.setContextMenu(tray_menu)
     self.tray_icon.show()
-    # self.tray_icon.showMessage(f"MDCx {self.localversion}", u'已启动！欢迎使用!', QIcon(self.icon_ico), 3000)
+    # self.tray_icon.showMessage(f"MDCα {self.localversion}", u'已启动！欢迎使用!', QIcon(self.icon_ico), 3000)
     # icon的值  0没有图标  1是提示  2是警告  3是错误
 
 

@@ -25,9 +25,9 @@ def load_config(self):
     config_path = config.path
 
     # 检测配置目录权限
-    mdcx_config = True
+    mdcα_config = True
     if not os.access(config_folder, os.W_OK) or not os.access(config_folder, os.R_OK):
-        mdcx_config = False
+        mdcα_config = False
 
     if os.path.exists(config_path):
         # ======================================================================================获取配置文件夹中的配置文件列表
@@ -1118,9 +1118,9 @@ def load_config(self):
                 self.tray_icon.show()
             except:
                 self.Init_QSystemTrayIcon()
-                if not mdcx_config:
+                if not mdcα_config:
                     self.tray_icon.showMessage(
-                        f"MDCx {self.localversion}",
+                        f"MDCα {self.localversion}",
                         "配置写入失败！所在目录没有读写权限！",
                         QIcon(resources.icon_ico),
                         3000,
@@ -1148,9 +1148,9 @@ def load_config(self):
                     self.tray_icon.show()
                 except:
                     self.Init_QSystemTrayIcon()
-                    if not mdcx_config:
+                    if not mdcα_config:
                         self.tray_icon.showMessage(
-                            f"MDCx {self.localversion}",
+                            f"MDCα {self.localversion}",
                             "配置写入失败！所在目录没有读写权限！",
                             QIcon(resources.icon_ico),
                             3000,
@@ -1160,9 +1160,9 @@ def load_config(self):
             try:
                 hide_dock_flag_file = "resources/Img/1"
                 # 在macOS上测试（普通用户），发现`hide_dock_flag_file`路径有几种情况（以下用xxx代替该相对路径）：
-                # 1.如果通过Finder进入/Applications/MDCx.app/Contents/MacOS/，然后运行MDCx，路径是/Users/username/xxx
-                # 2.如果通过终端进入/Applications/MDCx.app/Contents/MacOS/，然后运行MDCx，路径是/Applications/MDCx.app/Contents/MacOS/xxx
-                # 3.正常运行MDCx，路径是/xxx，也就是在根目录下
+                # 1.如果通过Finder进入/Applications/MDCα.app/Contents/MacOS/，然后运行MDCα，路径是/Users/username/xxx
+                # 2.如果通过终端进入/Applications/MDCα.app/Contents/MacOS/，然后运行MDCα，路径是/Applications/MDCα.app/Contents/MacOS/xxx
+                # 3.正常运行MDCα，路径是/xxx，也就是在根目录下
                 # 1和2都有权限写入文件，但不能持久化（升级后会丢失），3是没有写入权限。
                 # 暂时的处理：屏蔽异常，避免程序崩溃
                 # 考虑的处理：不使用标记文件，只使用config
