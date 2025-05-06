@@ -316,7 +316,9 @@ def _scrape_one_file(file_path: str, file_info: tuple, file_mode: FileMode) -> t
             # 因为 trailer也有带文件名，不带文件名两种情况，不能使用pic_final_catched。比如图片不带文件名，trailer带文件名这种场景需要支持每个分集去下载trailer
             trailer_download(json_data, folder_new_path, folder_old_path, naming_rule)
             copy_trailer_to_theme_videos(json_data, folder_new_path, naming_rule)
-
+    
+    # 赋值actor到set
+    json_data["set"] = json_data.get("actor","");
     # 生成nfo文件
     write_nfo(json_data, nfo_new_path, folder_new_path, file_path)
 
