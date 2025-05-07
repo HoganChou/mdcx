@@ -258,6 +258,9 @@ def get_big_pic_by_amazon(
                     result, html_detail = get_amazon_data(url_new)
                     if result and html_detail:
                         html = etree.fromstring(html_detail, etree.HTMLParser())
+                        if not html:
+                            signal.show_traceback_log(f"html is none")
+                            continue;
                         detail_actor = str(html.xpath('//span[@class="author notFaded"]/a/text()')).replace(" ", "")
                         detail_info_1 = str(
                             html.xpath('//ul[@class="a-unordered-list a-vertical a-spacing-mini"]//text()')

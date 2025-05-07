@@ -91,7 +91,7 @@ class MDCαConfig(GeneratedConfig, ManualConfig):
             print(
                 f"""[modified_time]
 modified_time = {time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}
-version = {self.version}
+version = 120240924
 
 [media]
 media_path = {self.media_path}
