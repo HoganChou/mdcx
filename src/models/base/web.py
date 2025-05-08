@@ -455,7 +455,6 @@ class WebRequests:
                         response.encoding = "UTF-8"
                     if response.status_code == 200:
                         signal.add_log(f"✅ 成功 {url}")
-                        signal.add_log(f"response.headers: {str(response.headers)}")
                         return response.headers, response.text
                     else:
                         error_info = f"{response.status_code} {url}"
