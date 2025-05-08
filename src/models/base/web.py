@@ -399,7 +399,7 @@ class WebRequests:
                 pass
         return False
 
-    def curl_html(self, url, headers=None, proxies=True, cookies=None):
+    def curl_html(self, url, headers=None, proxies=True, cookies=None, use_byparr=False):
         """
         curl请求(模拟浏览器指纹)
         """
@@ -416,20 +416,51 @@ class WebRequests:
         signal.add_log(f"🔎 请求 {url}")
         for i in range(int(retry_times)):
             try:
-                response = self.curl_session.get(
-                    url_encode(url), headers=headers, cookies=cookies, proxies=proxies, impersonate="chrome120"
-                )
-                if "amazon" in url:
-                    response.encoding = "Shift_JIS"
+                if use_byparr and config.byparr_url:
+                    # FlareSolverr configuration
+                    payload = {
+                        "cmd": "request.get",
+                        "url": url,
+                        "maxTimeout": 30
+                    }
+                    if headers:
+                        payload["headers"] = headers
+                    if cookies:
+                        if isinstance(cookies, dict):
+                            payload["cookies"] = [{"name": k, "value": v} for k, v in cookies.items()]
+                        elif isinstance(cookies, list):
+                            payload["cookies"] = cookies
+                    # Send request to FlareSolverr
+                    response = self.curl_session.post(config.byparr_url, json=payload)
+                    response.raise_for_status()
+                    data = response.json()
+                    if data.get("status") == "ok":
+                        solution = data.get("solution", {})
+                        headers = solution.get("cookies", {})
+                        body = solution.get("response", "")
+                        signal.add_log(f"✅ 成功 {url} via ByParr")
+                        return headers, body
+                    else:
+                        error_info = f"ByParr failed: {data.get('message', 'Unknown error')}"
+                        signal.add_log(f"🔴 重试 [{i + 1}/{retry_times}] {error_info}")
+                        continue
                 else:
-                    response.encoding = "UTF-8"
-                if response.status_code == 200:
-                    signal.add_log(f"✅ 成功 {url}")
-                    return response.headers, response.text
-                else:
-                    error_info = f"{response.status_code} {url}"
-                    signal.add_log(f"🔴 重试 [{i + 1}/{retry_times}] {error_info}")
-                    continue
+                    # Direct method using curl_cffi.requests
+                    response = self.curl_session.get(
+                        url_encode(url), headers=headers, cookies=cookies, proxies=proxies, impersonate="chrome120"
+                    )
+                    if "amazon" in url:
+                        response.encoding = "Shift_JIS"
+                    else:
+                        response.encoding = "UTF-8"
+                    if response.status_code == 200:
+                        signal.add_log(f"✅ 成功 {url}")
+                        signal.add_log(f"response.headers: {str(response.headers)}")
+                        return response.headers, response.text
+                    else:
+                        error_info = f"{response.status_code} {url}"
+                        signal.add_log(f"🔴 重试 [{i + 1}/{retry_times}] {error_info}")
+                        continue
             except Exception as e:
                 error_info = f"{url}\nError: {e}"
                 signal.add_log(f"[{i + 1}/{retry_times}] {error_info}")

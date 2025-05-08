@@ -43,10 +43,10 @@ def main(
         language = "zh_tw"
         appoint_url = json_data["javlibrary"]["jp"]["website"].replace("/ja/", "/tw/")
 
-    json_data_zh = json.loads(javlibrary.main(number, appoint_url, language))
-    dic = json_data_zh["javlibrary"][language]
-    dic["originaltitle"] = json_data["javlibrary"]["jp"]["originaltitle"]
-    dic["originalplot"] = json_data["javlibrary"]["jp"]["originalplot"]
+    # json_data_zh = json.loads(javlibrary.main(number, appoint_url, language))
+    dic = json_data["javlibrary"]["jp"]
+    # dic["originaltitle"] = json_data["javlibrary"]["jp"]["originaltitle"]
+    # dic["originalplot"] = json_data["javlibrary"]["jp"]["originalplot"]
     json_data["javlibrary"].update({"zh_cn": dic, "zh_tw": dic})
 
     js = json.dumps(

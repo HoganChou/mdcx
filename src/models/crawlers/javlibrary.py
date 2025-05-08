@@ -48,16 +48,17 @@ def get_title(html):
 
 
 def get_number(html, number):
-    result = html.xpath('//div[@id="video_id"]/table/tr/td[@class="text"]/text()')
+    result = html.xpath('//div[@id="video_id"]/table/tbody/tr/td[@class="text"]/text()')
     return result[0] if result else number
 
 
 def get_actor(html):
-    result = html.xpath('//div[@id="video_cast"]/table/tr/td[@class="text"]/span/span[@class="star"]/a/text()')
+    result = html.xpath('//div[@id="video_cast"]/table/tbody/tr/td[@class="text"]/span/span[@class="star"]/a/text()')
     if result:
         result = str(result).strip(" []").replace("'", "").replace(", ", ",")
     else:
         result = ""
+    
     return result
 
 
@@ -83,7 +84,7 @@ def get_cover(html):
 
 
 def get_tag(html):
-    result = html.xpath('//div[@id="video_genres"]/table/tr/td[@class="text"]/span/a/text()')
+    result = html.xpath('//div[@id="video_genres"]/table/tbody/tr/td[@class="text"]/span/a/text()')
     if result:
         result = str(result).strip(" []").replace("'", "").replace(", ", ",")
     else:
@@ -92,7 +93,7 @@ def get_tag(html):
 
 
 def get_release(html):
-    result = html.xpath('//div[@id="video_date"]/table/tr/td[@class="text"]/text()')
+    result = html.xpath('//div[@id="video_date"]/table/tbody/tr/td[@class="text"]/text()')
     if result:
         result = str(result).strip(" []").replace("'", "").replace(", ", ",")
     else:
@@ -109,7 +110,7 @@ def get_year(release):
 
 
 def get_studio(html):
-    result = html.xpath('//div[@id="video_maker"]/table/tr/td[@class="text"]/span/a/text()')
+    result = html.xpath('//div[@id="video_maker"]/table/tbody/tr/td[@class="text"]/span/a/text()')
     if result:
         result = result[0]
     else:
@@ -118,7 +119,7 @@ def get_studio(html):
 
 
 def get_publisher(html):
-    result = html.xpath('//div[@id="video_label"]/table/tr/td[@class="text"]/span/a/text()')
+    result = html.xpath('//div[@id="video_label"]/table/tbody/tr/td[@class="text"]/span/a/text()')
     if result:
         result = result[0]
     else:
@@ -127,7 +128,7 @@ def get_publisher(html):
 
 
 def get_runtime(html):
-    result = html.xpath('//div[@id="video_length"]/table/tr/td/span[@class="text"]/text()')
+    result = html.xpath('//div[@id="video_length"]/table/tbody/tr/td/span[@class="text"]/text()')
     if result:
         result = result[0]
     else:
@@ -136,7 +137,7 @@ def get_runtime(html):
 
 
 def get_score(html):
-    result = html.xpath('//div[@id="video_review"]/table/tr/td/span[@class="score"]/text()')
+    result = html.xpath('//div[@id="video_review"]/table/tbody/tbody/tr/td/span[@class="score"]/text()')
     if result:
         result = result[0].strip("()")
     else:
@@ -145,7 +146,7 @@ def get_score(html):
 
 
 def get_director(html):
-    result = html.xpath('//div[@id="video_director"]/table/tr/td[@class="text"]/span/a/text()')
+    result = html.xpath('//div[@id="video_director"]/table/tbody/tr/td[@class="text"]/span/a/text()')
     if result:
         result = result[0]
     else:
@@ -196,9 +197,9 @@ def main(
             debug_info = f"搜索地址: {url_search} "
             LogBuffer.info().write(web_info + debug_info)
 
-            result, html_search = curl_html(url_search, proxies=proxies)
+            result, html_search = curl_html(url_search, proxies=proxies,use_byparr=True)
             if not result:
-                debug_info = f"请求错误: {html_search} "
+                debug_info = f"请求错误1: {html_search} "
                 LogBuffer.info().write(web_info + debug_info)
                 raise Exception(debug_info)
 
@@ -221,9 +222,9 @@ def main(
             debug_info = f"番号地址: {real_url} "
             LogBuffer.info().write(web_info + debug_info)
 
-            result, html_info = curl_html(real_url, proxies=proxies)
+            result, html_info = curl_html(real_url, proxies=proxies,use_byparr=True)
             if not result:
-                debug_info = f"请求错误: {html_info} "
+                debug_info = f"请求错误2: {html_info} "
                 LogBuffer.info().write(web_info + debug_info)
                 raise Exception(debug_info)
 

@@ -56,6 +56,8 @@ class GeneratedConfig:
     success_file_rename = 1
     del_empty_folder = 1
     show_poster = 1
+    byparr_url = r""
+    
 
     # file_download
     download_files = r",poster,thumb,fanart,nfo,ignore_wuma,ignore_fc2,ignore_guochan,"

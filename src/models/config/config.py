@@ -135,6 +135,8 @@ failed_file_move = {self.failed_file_move}
 success_file_rename = {self.success_file_rename}
 del_empty_folder = {self.del_empty_folder}
 show_poster = {self.show_poster}
+byparr_url = {self.byparr_url}
+
 
 [file_download]
 download_files = {self.download_files}
